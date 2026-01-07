@@ -1,6 +1,7 @@
 # Changelog  
 
 ## [Unreleased]  
+- Add output ZIP export (download all generated files at once)
 - Add cut guides (grid lines) option for A4 sticker sheet PDF
 - Add multi-page PDF generation when stickers exceed one page
 - Detect fully-opaque inputs and show a UI hint when transparency is missing
