@@ -9,7 +9,7 @@ from typing import List, Tuple
 import streamlit as st
 from PIL import Image, ImageDraw
 
-from sticker_factory.core import StickerOptions, make_sticker, preset_to_px
+from sticker_factory.core import StickerOptions, make_sticker, preset_to_px, is_fully_opaque
 from sticker_factory.pdfgen import GRID_PRESETS, SheetOptions, make_a4_sheet_pdf
 from sticker_factory.logging_utils import setup_logging
 from sticker_factory.paths import make_run_paths
@@ -79,7 +79,18 @@ def main() -> None:
         st.divider()
         st.subheader("Background")
         simple_bg_remove = st.checkbox("Simple background remove (solid bg)", value=False)
-        bg_threshold = st.slider("BG threshold", min_value=0, max_value=120, value=30, step=1, disabled=not simple_bg_remove)
+        auto_bg_remove_when_opaque = st.checkbox(
+            "Auto-enable simple bg remove when no transparency (recommended)",
+            value=True,
+        )
+        bg_threshold = st.slider(
+            "BG threshold",
+            min_value=0,
+            max_value=120,
+            value=30,
+            step=1,
+            disabled=not (simple_bg_remove or auto_bg_remove_when_opaque),
+        )
         
         st.divider()
         st.header("Sheet Options (A4 PDF)")
@@ -129,6 +140,21 @@ def main() -> None:
                 st.error(f"Failed to load sample {p.name}: {e}")
         
         if images:
+            opaque_inputs = [name for (name, im) in images if is_fully_opaque(im)]
+            
+            if opaque_inputs and (not simple_bg_remove) and (not auto_bg_remove_when_opaque):
+                st.warning(
+                    "Some inputs have no transparency. White border may NOT appear unless you enable "
+                    "'Simple background remove' (or turn on auto-enable option).\n\n"
+                    f"Opaque: {', '.join(opaque_inputs[:8])}"
+                    + (" ..." if len(opaque_inputs) > 8 else "")
+                )
+            elif opaque_inputs and auto_bg_remove_when_opaque and (not simple_bg_remove):
+                st.info(
+                    "Some inputs are fully opaque. Auto simple background removal will be applied "
+                    "to create transparency for the white border."
+                )
+            
             st.write(f"Loaded: **{len(images)}** image(s)")
             thumbs = st.columns(min(4, len(images)))
             for i, (name, img) in enumerate(images[:4]):
@@ -182,7 +208,21 @@ def main() -> None:
     for idx, (name, img) in enumerate(images, start=1):
         try:
             logger.info("Processing [%d/%d] %s", idx, len(images), name)
-            sticker = make_sticker(img, opts)
+            
+            effective_simple = bool(simple_bg_remove)
+            if auto_bg_remove_when_opaque and is_fully_opaque(img):
+                effective_simple = True
+            per_img_opts = StickerOptions(
+                preset=opts.preset,
+                target_px=opts.target_px,
+                custom_px=opts.custom_px,
+                border_px=opts.border_px,
+                simple_bg_remove=effective_simple,
+                bg_threshold=opts.bg_threshold,
+            )
+            
+            sticker = make_sticker(img, per_img_opts)
+            
             stickers.append(sticker)
             
             base = Path(name).stem
