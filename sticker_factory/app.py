@@ -97,6 +97,31 @@ def main() -> None:
         gap_mm = st.number_input("Gap (mm)", min_value=0.0, max_value=20.0, value=4.0, step=1.0)
         
         show_cut_guides = st.checkbox("Show cut guides (grid lines)", value=False)
+        
+        fill_mode_laebl = st.selectbox(
+            "Fill mode",
+            ["Repeat to fill", "Leave blanks"],
+            index=0,
+        )
+        fill_mode = "repeat" if fill_mode_laebl.startswith("Repeat") else "blank"
+        
+        show_labels = st.checkbox("Show labels", value=False)
+        label_mode_label = st.selectbox(
+            "Label mode",
+            ["Index (#1, #2, ...)", "Filename"],
+            index=0,
+            disabled=not show_labels,
+        )
+        label_mode = "index" if label_mode_label.startswith("Index") else "filename"
+        
+        label_font_size = st.slider(
+            "Label font size",
+            min_value=4.0,
+            max_value=12.0,
+            value=6.0,
+            step=0.5,
+            disabled=not show_labels,
+        )
     
     # Inputs
     c1, c2 = st.columns([2, 1], gap="large")
@@ -196,6 +221,10 @@ def main() -> None:
         margin_mm=float(margin_mm),
         gap_mm=float(gap_mm),
         show_cut_guides=bool(show_cut_guides),
+        fill_mode=str(fill_mode),
+        show_labels=bool(show_labels),
+        label_mode=str(label_mode),
+        label_font_size=float(label_font_size),
     )
     
     st.success(f"Run: {rp.run_id}")
@@ -237,7 +266,13 @@ def main() -> None:
     # PDF (even if some failed)
     pdf_path = rp.sheets_dir / f"sticker_sheet_{rp.run_id}.pdf"
     try:
-        make_a4_sheet_pdf(stickers=stickers, out_pdf_path=str(pdf_path), opts=sheet_opts)
+        ok_names = [r[0] for r in results_rows if r[1] == "OK"]
+        make_a4_sheet_pdf(
+            stickers=stickers,
+            sticker_names=ok_names,
+            out_pdf_path=str(pdf_path),
+            opts=sheet_opts,
+        )
         logger.info("PDF created: %s", str(pdf_path))
     except Exception as e:
         logger.exception("PDF generation failed: %s", e)
