@@ -28,6 +28,17 @@ def _to_rgba(img: Image.Image) -> Image.Image:
     return img
 
 
+def is_fully_opaque(img: Image.Image) -> bool:
+    """
+    Returns True if image has no transparency (alpha is 255 everywhere.)
+    JPG and most non-cutout PNGs will be fully opaque.
+    """
+    rgba = _to_rgba(img)
+    alpha = rgba.getchannel("A")
+    a_min, a_max = alpha.getextrema()
+    return a_min == 255 and a_max == 255
+
+
 def _resize_longest_side(img: Image.Image, longest: int) -> Image.Image:
     w, h = img.size
     if max(w, h) == longest:
