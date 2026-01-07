@@ -1,6 +1,8 @@
 # Changelog  
 
 ## [Unreleased]  
+- Detect fully-opaque inputs and show a UI hint when transparency is missing
+- Auto-enable simple background removal for fully-opaque inputs (optional)
 - (planned) Better background removal (rembg optional)
 - (planned) More sheet templates (A5, Letter)
 - (plaaned) Border styles (colored stroke, drop shadow)
