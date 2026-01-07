@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from io import BytesIO
-from typing import List, Tuple
 
 from PIL import Image
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
-from reportlab.pdfgen.canvas import Canvas
 from reportlab.lib.utils import ImageReader
+from reportlab.pdfgen.canvas import Canvas
 
 
 @dataclass(frozen=True)
@@ -34,7 +33,7 @@ def _img_to_reader(img: Image.Image) -> ImageReader:
 
 
 def make_a4_sheet_pdf(
-    stickers: List[Image.Image],
+    stickers: list[Image.Image],
     out_pdf_path: str,
     opts: SheetOptions,
 ) -> None:

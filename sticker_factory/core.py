@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Optional, Tuple
 
 import numpy as np
 from PIL import Image, ImageFilter
@@ -12,7 +11,7 @@ class StickerOptions:
     # Size
     preset: str     # "S"/"M"/"L"/"CUSTOM"
     target_px: int  # used when preset != CUSTOM (longest side)
-    custom_px: Optional[int] = None     # used when preset == CUSTOM
+    custom_px: int | None = None     # used when preset == CUSTOM
     
     # Border
     border_px: int = 24

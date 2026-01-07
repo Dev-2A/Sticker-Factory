@@ -1,20 +1,16 @@
 from __future__ import annotations
 
-import os
-from dataclasses import dataclass
 from io import BytesIO
 from pathlib import Path
-from typing import List, Tuple
 
 import streamlit as st
 from PIL import Image, ImageDraw
 
-from sticker_factory.core import StickerOptions, make_sticker, preset_to_px, is_fully_opaque
-from sticker_factory.pdfgen import GRID_PRESETS, SheetOptions, make_a4_sheet_pdf
+from sticker_factory.core import StickerOptions, is_fully_opaque, make_sticker, preset_to_px
 from sticker_factory.logging_utils import setup_logging
 from sticker_factory.paths import make_run_paths
+from sticker_factory.pdfgen import GRID_PRESETS, SheetOptions, make_a4_sheet_pdf
 from sticker_factory.samples import ensure_samples
-
 
 st.set_page_config(page_title="Sticker Factory", layout="wide")
 
@@ -118,7 +114,7 @@ def main() -> None:
             index=0,
         )
         
-        images: List[Tuple[str, Image.Image]] = []
+        images: list[tuple[str, Image.Image]] = []
         
         # Load uploads
         if uploads:
@@ -201,7 +197,7 @@ def main() -> None:
     st.success(f"Run: {rp.run_id}")
     st.code(str(rp.out_dir), language="text")
     
-    stickers: List[Image.Image] = []
+    stickers: list[Image.Image] = []
     results_rows = []
     
     # Process each image with failure isolation

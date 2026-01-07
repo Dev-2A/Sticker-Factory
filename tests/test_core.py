@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from PIL import Image, ImageDraw
 
-from sticker_factory.core import StickerOptions, make_sticker, is_fully_opaque
+from sticker_factory.core import StickerOptions, is_fully_opaque, make_sticker
 
 
 def test_make_sticker_returns_rgba_and_nonempty():

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+
 from PIL import Image
 
 from sticker_factory.pdfgen import SheetOptions, make_a4_sheet_pdf
