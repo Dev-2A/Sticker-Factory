@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from io import BytesIO
 from math import ceil
-from typing import List
 
 from PIL import Image
 from reportlab.lib.pagesizes import A4
