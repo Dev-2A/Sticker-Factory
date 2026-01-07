@@ -1,6 +1,8 @@
 # Changelog  
 
 ## [Unreleased]  
+- Add cut guides (grid lines) option for A4 sticker sheet PDF
+- Add multi-page PDF generation when stickers exceed one page
 - Detect fully-opaque inputs and show a UI hint when transparency is missing
 - Auto-enable simple background removal for fully-opaque inputs (optional)
 - (planned) Better background removal (rembg optional)
