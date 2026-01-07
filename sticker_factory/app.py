@@ -94,6 +94,8 @@ def main() -> None:
         cols, rows = GRID_PRESETS[grid_preset]
         margin_mm = st.number_input("Margin (mm)", min_value=0.0, max_value=30.0, value=10.0, step=1.0)
         gap_mm = st.number_input("Gap (mm)", min_value=0.0, max_value=20.0, value=4.0, step=1.0)
+        
+        show_cut_guides = st.checkbox("Show cut guides (grid lines)", value=False)
     
     # Inputs
     c1, c2 = st.columns([2, 1], gap="large")
@@ -192,6 +194,7 @@ def main() -> None:
         rows=int(rows),
         margin_mm=float(margin_mm),
         gap_mm=float(gap_mm),
+        show_cut_guides=bool(show_cut_guides),
     )
     
     st.success(f"Run: {rp.run_id}")
