@@ -11,6 +11,7 @@ from sticker_factory.logging_utils import setup_logging
 from sticker_factory.paths import make_run_paths
 from sticker_factory.pdfgen import GRID_PRESETS, SheetOptions, make_a4_sheet_pdf
 from sticker_factory.samples import ensure_samples
+from sticker_factory.zip_utils import make_zip_bytes_from_dir
 
 st.set_page_config(page_title="Sticker Factory", layout="wide")
 
@@ -274,6 +275,26 @@ def main() -> None:
                 mime="application/pdf",
                 use_container_width=True,
             )
+        
+        # Output ZIP (save + download)
+        st.markdown("### Export")
+        try:
+            zip_res = make_zip_bytes_from_dir(rp.out_dir, arc_prefix=f"sticker_factory_{rp.run_id}")
+            zip_name = f"sticker_factory_{rp.run_id}.zip"
+            zip_path = rp.out_dir / zip_name
+            zip_path.write_bytes(zip_res.zip_bytes)
+            
+            st.download_button(
+                label=f"Download all outputs as ZIP ({zip_res.file_count} files)",
+                data=zip_res.zip_bytes,
+                file_name=zip_name,
+                mime="application/zip",
+                use_container_width=True,
+            )
+            st.caption(f"ZIP saved: {zip_path}")
+        except Exception as e:
+            logger.exception("ZIP export failed: %s", e)
+            st.error(f"ZIP export failed: {e}")
     
     with colB:
         previews = [_preview_on_checker(s) for s in stickers[:6]]
